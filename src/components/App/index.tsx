@@ -22,18 +22,17 @@ const App = () => {
         <div className="grafics">
 
           <div className="random_grafics">
-            <div id="mychart"></div>
             <Fragment>
-              <RandomGrafic />
-            </Fragment>
-
-            {/* <Fragment>
               <RandomGrafic />
             </Fragment>
 
             <Fragment>
               <RandomGrafic />
-            </Fragment> */}
+            </Fragment>
+
+            <Fragment>
+              <RandomGrafic />
+            </Fragment>
           </div>
 
           <div className="pieGrafic">
