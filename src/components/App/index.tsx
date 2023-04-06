@@ -1,16 +1,11 @@
-import React, {Component, Fragment, useState} from 'react'
-
+import React from 'react'
 import Recent from './RecentBoughts'
 import RandomGrafic from './RandomGrafic'
 import Sum from './Sum'
 import imgSrc from '../../assets/logo.png';
-import Modal from './AddNewCategory'
 import Chart from './Chart'
 
-
 const App = () => {
-
-  const [modalActive, setModalActive] = useState(false)
 
   return (
     <div className="div">
@@ -33,7 +28,7 @@ const App = () => {
       <div className="right">
       <img className='logo' src={imgSrc} alt="" />
           <Sum />
-          <button className='add_new_entry_btn' onClick={() => setModalActive(true)}>Add New Entry</button>
+          <button className='add_new_entry_btn'>Add New Entry</button>
           <Recent />
       </div>
     </div>

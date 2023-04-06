@@ -1,5 +1,4 @@
-import React, {useLayoutEffect} from 'react'
-
+import React from 'react'
 
 const Recent = () => {
     return (

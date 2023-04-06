@@ -14,7 +14,6 @@
     "@amcharts/amcharts5": "^5.3.8",
     "@mui/material": "^5.11.15",
     "@react-spring/web": "^9.7.1",
-    "@types/victory": "^35.0.0",
     "chart.js": "^4.2.1",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",

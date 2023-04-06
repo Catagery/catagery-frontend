@@ -1,15 +1,11 @@
-import React, {useLayoutEffect, useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend} from 'chart.js'
 import {Bar} from 'react-chartjs-2'
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend)
 
-
-
-
 const RandomGrafic = () => {
    
-
     const [data, setData] = useState({
         labels: ['27.01', '26.01', '25.01'],
         datasets:[{
@@ -22,17 +18,17 @@ const RandomGrafic = () => {
     })
 
     useEffect(() => {
-        const fetchData = async() =>{
+        const fetchData  = () =>{
             const dataset: any[] = [];
-            await fetch(import.meta.env.VITE_BACKEND_URL)
+             fetch(import.meta.env.VITE_BACKEND_URL)
             .then(data => {
                 const res = data.json()
                 return res
                 
             }).then((res) =>{
-                for(const val of Object.keys(res.CategoryGrafic1)){
-                    dataset.push(res.CategoryGrafic1[val].price)
-                }
+                Object.values(res.CategoryGrafic1).forEach((item) => {
+                    dataset.push(item.price);
+                    })
                 setData({labels: ['27.01', '26.01', '25.01'],
                 datasets:[{
                     data: dataset,
@@ -49,7 +45,6 @@ const RandomGrafic = () => {
        
         fetchData();       
     },[])
-
     
     const options ={
         plugins: {
@@ -57,7 +52,6 @@ const RandomGrafic = () => {
         },
         responsive: true,
         maintainAspectRatio: false,
-        //barThickness:20
     }
     return(
         <div className="random_grafic">
