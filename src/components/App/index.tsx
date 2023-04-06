@@ -1,7 +1,7 @@
 import React from 'react'
 import Recent from './RecentBoughts'
 import RandomGrafic from './RandomGrafic'
-import Sum from './Sum2'
+import Sum from './Sum'
 import imgSrc from '../../assets/logo.png';
 import Chart from './Chart'
 
