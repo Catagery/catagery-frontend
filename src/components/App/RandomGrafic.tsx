@@ -18,29 +18,22 @@ const RandomGrafic = () => {
     })
 
     useEffect(() => {
-        const fetchData  = () =>{
+        const fetchData  = async () =>{
             const dataset: any[] = [];
-             fetch(import.meta.env.VITE_BACKEND_URL)
-            .then(data => {
-                const res = data.json()
-                return res
-                
-            }).then((res) =>{
-                Object.values(res.CategoryGrafic1).forEach((item) => {
-                    dataset.push(item.price);
-                    })
-                setData({labels: ['27.01', '26.01', '25.01'],
-                datasets:[{
-                    data: dataset,
-                    backgroundColor: 'black',
-                    borderColor: 'black',
-                    borderWidth:1,
+            const data = await fetch(import.meta.env.VITE_BACKEND_URL)
+            const res = await data.json()
             
-                }]})
-            })
-            .catch(error => {
-                console.error(error);
-            });
+            Object.values(res.CategoryGrafic1).forEach((item: any) => {
+                dataset.push(item.price);
+                })
+            setData({labels: ['27.01', '26.01', '25.01'],
+            datasets:[{
+                data: dataset,
+                backgroundColor: 'black',
+                borderColor: 'black',
+                borderWidth:1,
+            
+            }]}) 
         }
        
         fetchData();       

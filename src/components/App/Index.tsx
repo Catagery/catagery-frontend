@@ -15,9 +15,9 @@ const App = () => {
         </div>
         
         <div className="grafics">
-          <div className="pieGrafic">
-            <Chart />
-          </div>
+        
+          <Chart/>
+        
           <div className="random_grafics">
               <RandomGrafic />                
               <RandomGrafic />

@@ -191,9 +191,11 @@
 .div{
     display: flex; 
     height: 100vh;
+
 }
 
 .left{
+    padding-left: 100px;
     padding-top: 20px;
     display: flex;
     flex-direction: column;
@@ -232,11 +234,37 @@
 
 
 .pieGrafic{
+    display: flex;
+    gap: 50px;
     width: 100%;
-    height: 50%;
+    height: 70%;
     background-color: white;
     border-radius: 10px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 30px;
+    padding-left: 50px;
+    align-items: center;
+}
 
+.categories{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    list-style: none;
+}
+
+.categories p {
+   padding-bottom: 2.5px;
+}
+
+/* MAKE CHANGE dynamically */
+.cat_color{
+    border-radius: 50%;
+    background-color: black;
+    width: 10px;
+    height: 10px;
 }
 
 
@@ -244,7 +272,7 @@
     width:100%;
     display: flex;
     flex-direction: column;
-    gap: 60px;
+    gap: 30px;
     justify-content: center;
     align-items: center;
 }
@@ -355,4 +383,13 @@
 
 .non_active{
     display: none;
+}
+
+.top_category_wrapper{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    margin-top: 20px;
+    align-items: center;
+    width: 100px;
 }
