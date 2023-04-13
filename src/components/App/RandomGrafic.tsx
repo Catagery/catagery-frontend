@@ -21,28 +21,32 @@ const RandomGrafic = () => {
 
     const [selectedValue, setSelectedValue] = useState('');
 
-    const handleSelectChange = async (event) => {
+    const [grafics, setGrafics] = useState<any>([])
+    const [category, setCategory] = useState<any>([])
+    const [myCategories, setCategories] = useState<any>([])
+
+    const handleSelectChange = (event) => {
         setSelectedValue(event.target.value);
         console.log(selectedValue)
         const dataset: any[] = [];
-        const categories: any[] = [];
-        const response = await fetch(import.meta.env.VITE_BACKEND_URL + selectedValue);
-        const res = await response.json()
-
-        Object.values(res.CategoryGrafic).forEach((item: any) => {
-            dataset.push(item.price);
+        var id = category.id;
+        myCategories.forEach((item: any) => {
+            if(item.title === selectedValue){
+                id = item.id;
+            }
+        })
+        Object.values(grafics).forEach((item: any) => {
+            if(item.category === id){
+                dataset.push(item.price);
+            }
             })
-        Object.values(res.Categories).forEach((category: any) => {
-            categories.push([category.title, category.id]);
-            })
-
         setData({labels: ['27.01', '26.01', '25.01'],
-            datasets:[{
-                data: dataset,
-                backgroundColor: 'black',
-                borderColor: 'black',
-                borderWidth:1,
-            }]})     
+        datasets:[{
+            data: dataset,
+            backgroundColor: 'black',
+            borderColor: 'black',
+            borderWidth:1,
+        }]}) 
       };
     
     useEffect(() => {
@@ -51,14 +55,16 @@ const RandomGrafic = () => {
             const categories: any[] = [];
             const data = await fetch(import.meta.env.VITE_BACKEND_URL)
             const res = await data.json()
-
             Object.values(res.CategoryGrafic).forEach((item: any) => {
                 dataset.push(item.price);
                 })
             Object.values(res.Categories).forEach((category: any) => {
                 categories.push([category.title, category.id]);
                 })
-
+            
+            setGrafics(res.AllGrafics)
+            setCategory(res.ChoosenCategory)
+            setCategories(res.Categories)
             setData({labels: ['27.01', '26.01', '25.01'],
             datasets:[{
                 data: dataset,
