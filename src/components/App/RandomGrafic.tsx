@@ -42,13 +42,7 @@ const RandomGrafic = () => {
                 backgroundColor: 'black',
                 borderColor: 'black',
                 borderWidth:1,
-            }]}) 
-
-            setAllCategories(categories.map((item: any) => 
-            <option value={item[0]} selected={item[1] === res.CategoryGrafic[0].category}>
-                {item[0]}
-            </option>
-            ))            
+            }]})     
       };
     
     useEffect(() => {
@@ -72,12 +66,6 @@ const RandomGrafic = () => {
                 borderColor: 'black',
                 borderWidth:1,
             }]}) 
-
-            categories.map((item: any) => {
-                if (item[1] === res.CategoryGrafic[0].category){
-                    setSelectedValue(item[0])
-                }
-            })
 
             setAllCategories(categories.map((item: any) => 
             <option value={item[0]} selected={item[1] === res.CategoryGrafic[0].category}>
