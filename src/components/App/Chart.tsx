@@ -8,7 +8,7 @@ ChartJS.register(
     Legend
 )
 
-const options ={
+const my_options ={
     plugins: {
         legend: false
     },
@@ -16,6 +16,7 @@ const options ={
 
 const Chart = () => {
     const [listItems, setListItems] = useState<any>([])
+
     const [data, setData] = useState<any>({
         labels: ['Yes', 'No'],
         datasets: [{
@@ -25,26 +26,31 @@ const Chart = () => {
             borderColor: ['black', 'white'],
         }]
     })
+    
     const dataset: any[] = [];
+    const chartData: any[] = [];
     
     useEffect(() => {
         const fetchData  = async () =>{
            
             const data = await fetch(import.meta.env.VITE_TOP_CATEGORIES)
             const res = await data.json()
-            console.log(res)
-            Object.values(res.data).forEach((item: any) => {
+            //console.log(res)
+            Object.values(res.top_categories).forEach((item: any) => {
                 dataset.push(item);
+                })
+            Object.values(res.all_categories).forEach((item: any) => {
+                chartData.push(item);
                 })
             setData({labels: null,
             datasets:[{
-                data: dataset.map((item: any) => item.total_spend),
+                data: chartData.map((item: any) => item.total_spend),
                 backgroundColor: dataset.map((item: any) => item.color),
                 borderColor: 'black',
                 borderWidth:1,
             
             }]}) 
-            console.log(dataset)
+            //console.log(dataset)
             setListItems(dataset.map((item: any) => 
             <li className='top_category_wrapper'>
                 <div className="cat_color" style={{backgroundColor: item.color}}></div>
@@ -59,7 +65,7 @@ const Chart = () => {
     return(
         <div className="pieGrafic">
              <Doughnut
-            options={options}
+            options={my_options}
             data={data}
             />
             <ul className="categories">
