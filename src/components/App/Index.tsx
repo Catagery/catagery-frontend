@@ -10,9 +10,9 @@ const App = () => {
   return (
     <div className="div">
       <div className="left">
-        <div className="container">
+        {/* <div className="container">
           <h1>Hello User</h1>
-        </div>
+        </div> */}
         
         <div className="grafics">
         

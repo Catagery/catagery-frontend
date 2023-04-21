@@ -9,9 +9,12 @@ ChartJS.register(
 )
 
 const my_options ={
-    plugins: {
-        legend: false
-    },
+    plugins:{
+        legend:{
+            display: false,
+            rotation: 45,
+        }
+    }
 }
 
 const Chart = () => {
@@ -32,7 +35,6 @@ const Chart = () => {
     
     useEffect(() => {
         const fetchData  = async () =>{
-           
             const data = await fetch(import.meta.env.VITE_TOP_CATEGORIES)
             const res = await data.json()
             //console.log(res)
@@ -42,7 +44,7 @@ const Chart = () => {
             Object.values(res.all_categories).forEach((item: any) => {
                 chartData.push(item);
                 })
-            setData({labels: null,
+            setData({labels: chartData.map((item: any) => item.title),
             datasets:[{
                 data: chartData.map((item: any) => item.total_spend),
                 backgroundColor: dataset.map((item: any) => item.color),
@@ -58,7 +60,6 @@ const Chart = () => {
             </li>
             ))
         }
-       
         fetchData();       
     },[])
 
@@ -68,12 +69,10 @@ const Chart = () => {
             options={my_options}
             data={data}
             />
-            <ul className="categories">
+             <ul className="categories">
                 {listItems}
             </ul>
-
         </div>
-       
     )
 }
 

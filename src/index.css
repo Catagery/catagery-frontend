@@ -191,19 +191,17 @@
 .div{
     display: flex; 
     height: 100vh;
-
 }
 
 .left{
     padding-left: 100px;
-    padding-top: 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 80%;
     background-color: rgb(230, 230, 230);
-    height:calc(100vh - 20px);
+    height:100vh;
 }
 
 .right{
@@ -272,7 +270,7 @@
     width:100%;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 20px;
     justify-content: center;
     align-items: center;
 }
@@ -284,8 +282,9 @@
     background-color: white;
     padding: 20px;
     border-radius: 10px;
-    padding-bottom: 80px;
+    padding-bottom: 130px;
 }
+
 
 .random_grafic_cont{
     display: flex;
@@ -392,4 +391,10 @@
     margin-top: 20px;
     align-items: center;
     width: 100px;
+}
+
+.calendars{
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
 }

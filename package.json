@@ -12,12 +12,19 @@
   "dependencies": {
     "@amcharts/amcharts4": "^4.10.35",
     "@amcharts/amcharts5": "^5.3.8",
-    "@mui/material": "^5.11.15",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/material": "^5.12.1",
+    "@mui/styled-engine-sc": "^5.12.0",
+    "@mui/x-date-pickers": "^6.2.0",
     "@react-spring/web": "^9.7.1",
     "chart.js": "^4.2.1",
+    "dayjs": "^1.11.7",
     "react": "^18.2.0",
+    "react-calendar": "^4.2.1",
     "react-chartjs-2": "^5.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "styled-components": "^5.3.9"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
