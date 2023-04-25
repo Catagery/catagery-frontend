@@ -5,6 +5,7 @@ import Sum from './Sum'
 import imgSrc from '../../assets/logo.png';
 import Chart from './Chart'
 import ModalAddPurchase from './ModalAddPurchase';
+import ModalAddCategory from './ModalAddCategory';
 
 const App = () => {
 
@@ -30,6 +31,7 @@ const App = () => {
       <img className='logo' src={imgSrc} alt="" />
           <Sum />       
           <ModalAddPurchase />
+          <ModalAddCategory />
           <Recent/>
       </div>
     </div>
