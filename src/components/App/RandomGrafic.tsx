@@ -62,8 +62,6 @@ const RandomGrafic = () => {
         const response = await fetch(import.meta.env.VITE_BACKEND_URL + event.target.value);
         const res = await response.json()
         const category_ = res.CategoryGrafic[0].category;
-        console.log(category_)
-
         Object.values(res.CategoryGrafic).forEach((item: any) => {
             dataset.push(item.price);
             labels.push(item.date);
@@ -73,7 +71,6 @@ const RandomGrafic = () => {
             if(category.id === category_){
                 setSpend(category.total_spend);
             }
-            
             })
 
         setData({labels: labels,

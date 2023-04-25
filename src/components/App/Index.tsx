@@ -4,6 +4,7 @@ import RandomGrafic from './RandomGrafic'
 import Sum from './Sum'
 import imgSrc from '../../assets/logo.png';
 import Chart from './Chart'
+import ModalAddPurchase from './ModalAddPurchase';
 
 const App = () => {
 
@@ -27,9 +28,9 @@ const App = () => {
 
       <div className="right">
       <img className='logo' src={imgSrc} alt="" />
-          <Sum />
-          <button className='add_new_entry_btn'>Add New Entry</button>
-          <Recent />
+          <Sum />       
+          <ModalAddPurchase />
+          <Recent/>
       </div>
     </div>
     )
