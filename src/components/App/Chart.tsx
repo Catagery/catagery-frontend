@@ -46,8 +46,8 @@ const Chart = () => {
                 })
             setData({labels: chartData.map((item: any) => item.title),
             datasets:[{
-                data: chartData.map((item: any) => item.total_spend),
-                backgroundColor: dataset.map((item: any) => item.color),
+                data: chartData.map((item: any) => item.total_spend.toFixed(2)),
+                backgroundColor: chartData.map((item: any) => item.color),
                 borderColor: 'black',
                 borderWidth:1,
             

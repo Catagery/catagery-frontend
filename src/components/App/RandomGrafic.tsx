@@ -52,7 +52,7 @@ const RandomGrafic = () => {
 
     const [allCategories, setAllCategories] = useState<any>([])
 
-    let [spend, setSpend] = useState<any>('')
+    let [spend, setSpend] = useState<any>(0)
 
     const handleSelectChange = async (event) => {
         const dataset: any[] = [];
@@ -61,18 +61,27 @@ const RandomGrafic = () => {
         SetCategory(event.target.value)
         const response = await fetch(import.meta.env.VITE_BACKEND_URL + event.target.value);
         const res = await response.json()
-        const category_ = res.CategoryGrafic[0].category;
-        Object.values(res.CategoryGrafic).forEach((item: any) => {
-            dataset.push(item.price);
-            labels.push(item.date);
-            })
-        Object.values(res.Categories).forEach((category: any) => {
-            categories.push([category.title, category.id]);
-            if(category.id === category_){
-                setSpend(category.total_spend);
-            }
-            })
-
+        const category_ = res.Category
+        if(res.found){
+            Object.values(res.CategoryGrafic).forEach((item: any) => {
+                dataset.push(item.price.toFixed(2));
+                labels.push(item.date);
+                })
+            Object.values(res.Categories).forEach((category: any) => {
+                categories.push([category.title, category.id]);
+                if(category.id === category_.id){
+                    setSpend(category.total_spend);
+                }
+                })
+        }
+        else{
+            Object.values(res.Categories).forEach((category: any) => {
+                categories.push([category.title, category.id]);
+                if(category.id === category_.id){
+                    setSpend(category.total_spend);
+                }
+                })
+        }
         setData({labels: labels,
             datasets:[{
                 data: dataset,
@@ -90,13 +99,14 @@ const RandomGrafic = () => {
         const res = await response.json()
 
         Object.values(res.CategoryGrafic).forEach((item: any) => {
-            dataset.push(item.price);
+            dataset.push(item.price.toFixed(2));
             labels.push(item.date);
             })
         Object.values(res.Categories).forEach((category: any) => {
             categories.push([category.title, category.id]);
             if(category.id === category){
                 setSpend(category.total_spend);
+                SetCategory(category.title)
             }
             })
 
@@ -117,19 +127,29 @@ const RandomGrafic = () => {
             const labels: any[] = [];
             const data = await fetch(import.meta.env.VITE_BACKEND_URL)
             const res = await data.json()
-            const category_ = res.CategoryGrafic[0].category_name;
-            SetCategory(category_)
-            Object.values(res.CategoryGrafic).forEach((item: any) => {
-                dataset.push(item.price);
-                labels.push(item.date);
-                })
-            Object.values(res.Categories).forEach((category: any) => {
-                categories.push(category.title);
-                if(category.title === category_){
-                    setSpend(category.total_spend);
-                }
-                })
-
+            const category_ = res.Category
+            if(res.found){
+                Object.values(res.CategoryGrafic).forEach((item: any) => {
+                    dataset.push(item.price.toFixed(2));
+                    labels.push(item.date);
+                    })
+                Object.values(res.Categories).forEach((category: any) => {
+                    categories.push([category.title, category.id]);
+                    if(category.id === category_.id){
+                        setSpend(category.total_spend);
+                        SetCategory(category.title)
+                    }
+                    })
+            }
+            else{
+                Object.values(res.Categories).forEach((category: any) => {
+                    categories.push([category.title, category.id]);
+                    if(category.id === category_.id){
+                        setSpend(category.total_spend);
+                        SetCategory(category.title)
+                    }
+                    })
+            }
             setData({labels: labels,
             datasets:[{
                 data: dataset,
@@ -139,8 +159,8 @@ const RandomGrafic = () => {
             }]}) 
 
             setAllCategories(categories.map((item: any) => 
-            <option value={item} selected={item === res.CategoryGrafic[0].category_name}>
-                {item}
+            <option value={item[0]} selected={item[1] === category_.id}>
+                {item[0]}
             </option>
             ))            
             
@@ -159,14 +179,16 @@ const RandomGrafic = () => {
     return(
         <div className="random_grafic">
              <div className="random_grafic_cont">
-                 <h1>Category</h1>
+                 <h1>{category}</h1>
                  <select className='category_select_random_grafic' onChange={handleSelectChange} >
                     {allCategories}
                  </select>
                  
              </div>
-             <h2>{spend}$</h2>
-             <Button onClick={handleOpen}>Open modal</Button>
+             <div className="cont_date_and_sum">
+                <h2>{spend.toFixed(2)}$</h2>
+                <button className='select_date' onClick={handleOpen}>Select date</button>
+             </div>
             <Modal
                 open={open}
                 onClose={handleClose}

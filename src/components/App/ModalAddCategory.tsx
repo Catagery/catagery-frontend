@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import { HexColorPicker } from "react-colorful";
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -20,10 +21,14 @@ const style = {
 
 const ModalAddCategory = () => {
     const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
+    const handleOpen = () => {
+        setOpen(true)
+        setText('')
+    };
     const handleClose = () => setOpen(false);
     let [newCategory, setNewCategory] = useState<any>('')
     let [text, setText] = useState<any>('')
+    const [color, setColor] = useState("#aabbcc");
 
     const save = async () =>{
         const data = await fetch(
@@ -34,26 +39,26 @@ const ModalAddCategory = () => {
                     'Content-Type':'application/json',
                 },
                 body: JSON.stringify({
-                    category:newCategory,
+                    category: newCategory,
+                    color: color,
                 })
             }
             )
         const res = await data.json()
         if(!res.created){
-            setText("That category already exists")
+            setText("That category already exists or you didn't provide category name")
         }
         else{
-            setText("Category successfully added")
+            window.location.reload(); 
         }
     }
 
     const getCategory = (e) =>{
         setNewCategory(e.target.value)
     }
-
     return(
         <div className="new_cat">
-            <button className='add_new_entry_btn' onClick={handleOpen}>Add category</button>
+            <button className='add_new_category_btn' onClick={handleOpen}>Add category</button>
             <Modal
                   open={open}
                   onClose={handleClose}
@@ -61,16 +66,16 @@ const ModalAddCategory = () => {
                   aria-describedby="modal-modal-description"
               >
                   <Box sx={style}>
+                    <h3>Choose a category color:</h3>
+                    <HexColorPicker color={color} onChange={setColor} />
                   <input className='new_category_spended' type="text" placeholder='Enter category name' onChange={getCategory}/>
                   <p>{text}</p>
                   <button className='add_new_category_save' onClick={save}>Add</button>
-                  <Button onClick={handleClose}>Close modal</Button>
+                  <Button onClick={handleClose}>Close</Button>
                   </Box>
               </Modal>
         </div>
-       
     )
-     
 }
 export default ModalAddCategory
   

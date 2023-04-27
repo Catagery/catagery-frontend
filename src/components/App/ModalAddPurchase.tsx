@@ -20,11 +20,15 @@ const style = {
 
 const ModalAddPurchase = () => {
     const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
+    const handleOpen = () => {
+        setOpen(true)
+        setText('')
+    };
     const handleClose = () => setOpen(false);
     const [allCategories, setAllCategories] = useState<any>([])
     let [selectedCategory, setSelectedCategory] = useState<any>('')
     let [purchaseSum, setPurchaseSum] = useState(0)
+    let [text, setText] = useState('');
     const save = async () =>{
         const data = await fetch(
             import.meta.env.VITE_ADD_PURCHASE_URL, 
@@ -40,7 +44,12 @@ const ModalAddPurchase = () => {
             }
             )
         const res = await data.json()
-        console.log(res)
+        if(res.status !== 200){
+            setText("Sum entered wrong")
+        }
+        else{
+            window.location.reload()
+        }
     }
 
     const handleChange = (event) =>{
@@ -84,8 +93,9 @@ const ModalAddPurchase = () => {
                     {allCategories}
                   </select>
                   <input className='new_category_spended' type="text" placeholder='Enter spended sum' onChange={setSum}/>
+                  <p>{text}</p>
                   <button className='add_new_category_save' onClick={save}>Add</button>
-                  <Button onClick={handleClose}>Close modal</Button>
+                  <Button onClick={handleClose}>Close</Button>
                   </Box>
               </Modal>
         </div>
