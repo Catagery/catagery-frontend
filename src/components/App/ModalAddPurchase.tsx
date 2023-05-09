@@ -1,22 +1,11 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import getCookie from '../functions/cookies';
+import style from '../styles/ModalStyle';
 
-const style = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 700,
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    p: 4,
-    display: 'flex',
-    flexDirection: 'column' as 'column',
-    gap: '20px',
-    alignItems:'center',
-  };
+const csrftoken = getCookie('csrftoken')
 
 const ModalAddPurchase = () => {
     const [open, setOpen] = React.useState(false);
@@ -29,79 +18,88 @@ const ModalAddPurchase = () => {
     let [selectedCategory, setSelectedCategory] = useState<any>('')
     let [purchaseSum, setPurchaseSum] = useState(0)
     let [text, setText] = useState('');
-    const save = async () =>{
+    let [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
+    
+    const save = async () => {
         const data = await fetch(
-            import.meta.env.VITE_ADD_PURCHASE_URL, 
+            import.meta.env.VITE_ADD_PURCHASE_URL,
             {
-                method:"POST",
-                headers:{
-                    'Content-Type':'application/json',
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    "X-CSRFToken": csrftoken,
+                    'Authorization': 'Bearer ' + String(authTokens.access)
                 },
                 body: JSON.stringify({
-                    category:selectedCategory,
-                    sum:purchaseSum
+                    category: selectedCategory,
+                    sum: purchaseSum
                 })
             }
-            )
+        )
         const res = await data.json()
-        if(res.status !== 200){
+        if (res.status !== 200) {
             setText("Sum entered wrong")
         }
-        else{
+        else {
             window.location.reload()
         }
     }
 
-    const handleChange = (event) =>{
+    const handleChange = (event) => {
         setSelectedCategory(event.target.value)
     }
 
-    const setSum = (e) =>{
+    const setSum = (e) => {
         setPurchaseSum(parseFloat(e.target.value))
     }
 
     useEffect(() => {
-        const fetchData  = async () =>{
+        const fetchData = async () => {
             const categories: any[] = [];
-            const data = await fetch(import.meta.env.VITE_ALL_CATEGORIES_URL)
+            const data = await fetch(import.meta.env.VITE_ALL_CATEGORIES_URL, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    "X-CSRFToken": csrftoken,
+                    'Authorization': 'Bearer ' + String(authTokens.access)
+                },
+            })
             const res = await data.json()
             console.log(res)
             Object.values(res.categories).forEach((item: any) => {
                 categories.push(item.title)
-                })
-            setAllCategories(categories.map((item: any) => 
+            })
+            setAllCategories(categories.map((item: any) =>
                 <option value={item}>
                     {item}
                 </option>
-            ))           
-            setSelectedCategory(categories[0]) 
+            ))
+            setSelectedCategory(categories[0])
         }
-        fetchData();       
-    },[])
+        fetchData();
+    }, [])
 
-    return(
+    return (
         <div className="new_cat">
             <button className='add_new_entry_btn' onClick={handleOpen}>Add purchase</button>
             <Modal
-                  open={open}
-                  onClose={handleClose}
-                  aria-labelledby="modal-modal-title"
-                  aria-describedby="modal-modal-description"
-              >
-                  <Box sx={style}>
-                  <select className='new_category_select' name="" id="" onChange={handleChange}>
-                    {allCategories}
-                  </select>
-                  <input className='new_category_spended' type="text" placeholder='Enter spended sum' onChange={setSum}/>
-                  <p>{text}</p>
-                  <button className='add_new_category_save' onClick={save}>Add</button>
-                  <Button onClick={handleClose}>Close</Button>
-                  </Box>
-              </Modal>
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <select className='new_category_select' name="" id="" onChange={handleChange}>
+                        {allCategories}
+                    </select>
+                    <input className='new_category_spended' type="text" placeholder='Enter spended sum' onChange={setSum} />
+                    <p>{text}</p>
+                    <button className='add_new_category_save' onClick={save}>Add</button>
+                    <Button onClick={handleClose}>Close</Button>
+                </Box>
+            </Modal>
         </div>
-       
+
     )
-     
+
 }
 export default ModalAddPurchase
-  

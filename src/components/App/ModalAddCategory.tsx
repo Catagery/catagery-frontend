@@ -1,23 +1,11 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { HexColorPicker } from "react-colorful";
-
-const style = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 700,
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    p: 4,
-    display: 'flex',
-    flexDirection: 'column' as 'column',
-    gap: '20px',
-    alignItems:'center',
-  };
+import getCookie from '../functions/cookies';
+import style from '../styles/ModalStyle';
+const csrftoken = getCookie('csrftoken')
 
 const ModalAddCategory = () => {
     const [open, setOpen] = React.useState(false);
@@ -29,53 +17,56 @@ const ModalAddCategory = () => {
     let [newCategory, setNewCategory] = useState<any>('')
     let [text, setText] = useState<any>('')
     const [color, setColor] = useState("#aabbcc");
+    let [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
 
-    const save = async () =>{
+    const save = async () => {
         const data = await fetch(
-            import.meta.env.VITE_ADD_CATEGORY_URL, 
+            import.meta.env.VITE_ADD_CATEGORY_URL,
             {
-                method:"POST",
-                headers:{
-                    'Content-Type':'application/json',
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    "X-CSRFToken": csrftoken,
+                    'Authorization': 'Bearer ' + String(authTokens.access)
                 },
                 body: JSON.stringify({
                     category: newCategory,
                     color: color,
                 })
             }
-            )
+        )
         const res = await data.json()
-        if(!res.created){
+        if (!res.created) {
             setText("That category already exists or you didn't provide category name")
         }
-        else{
-            window.location.reload(); 
+        else {
+            window.location.reload();
         }
     }
 
-    const getCategory = (e) =>{
+    const getCategory = (e) => {
         setNewCategory(e.target.value)
     }
-    return(
+    
+    return (
         <div className="new_cat">
             <button className='add_new_category_btn' onClick={handleOpen}>Add category</button>
             <Modal
-                  open={open}
-                  onClose={handleClose}
-                  aria-labelledby="modal-modal-title"
-                  aria-describedby="modal-modal-description"
-              >
-                  <Box sx={style}>
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
                     <h3>Choose a category color:</h3>
                     <HexColorPicker color={color} onChange={setColor} />
-                  <input className='new_category_spended' type="text" placeholder='Enter category name' onChange={getCategory}/>
-                  <p>{text}</p>
-                  <button className='add_new_category_save' onClick={save}>Add</button>
-                  <Button onClick={handleClose}>Close</Button>
-                  </Box>
-              </Modal>
+                    <input className='new_category_spended' type="text" placeholder='Enter category name' onChange={getCategory} />
+                    <p>{text}</p>
+                    <button className='add_new_category_save' onClick={save}>Add</button>
+                    <Button onClick={handleClose}>Close</Button>
+                </Box>
+            </Modal>
         </div>
     )
 }
 export default ModalAddCategory
-  

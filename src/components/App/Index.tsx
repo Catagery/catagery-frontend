@@ -6,176 +6,171 @@ import imgSrc from '../../assets/logo.png';
 import Chart from './Chart'
 import ModalAddPurchase from './ModalAddPurchase';
 import ModalAddCategory from './ModalAddCategory';
+import getCookie from '../functions/cookies';
+import jwt_decode from 'jwt-decode';
 
-function getCookie(name) {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-          // Does this cookie string begin with the name we want?
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
-              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
-          }
-      }
-  }
-  return cookieValue;
-}
-const csrftoken = getCookie('csrftoken');
-
+const csrftoken = getCookie('csrftoken')
 const App = () => {
 
-  const [currentUser, setCurrentUser] = useState();
-  const [registrationToggle, setRegistrationToggle] = useState(false);
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
-  useEffect(() => {
-    fetch(import.meta.env.VITE_USER, {method:'get'})
-    .then(function(e){
-        setCurrentUser(true);
-      })
-      .catch(function(error){
-        setCurrentUser(false);
-      })
-  }, [])
-
-  function update_form_btn(){
-    if(registrationToggle){
+  function update_form_btn() {
+    if (registrationToggle) {
       document.getElementById("form_btn").innerHTML = "Register";
-      setRegistrationToggle(false)
-    } else{
+      setRegistrationToggle(false);
+    } else {
       document.getElementById("form_btn").innerHTML = "Log in";
-      setRegistrationToggle(true)
+      setRegistrationToggle(true);
     }
   }
 
-  const submitRegistration = (e)=>{
-    e.preventDefault()
-    fetch(
-      import.meta.env.VITE_REGISTER, 
-      {
-          method:"POST",
-          headers:{
-              'Content-Type':'application/json',
-              "X-CSRFToken": csrftoken,
-          },
-          body: JSON.stringify({
-              email: email,
-              username: username,
-              password:password,
-          })
-      }
-      ).then(function(res){
-        fetch(
-          import.meta.env.VITE_LOGIN, 
-          {
-              method:"POST",
-              headers:{
-                  'Content-Type':'application/json',
-                  "X-CSRFToken": csrftoken,
-              },
-              body: JSON.stringify({
-                  email: email,
-                  username: username,
-                  password:password,
-              })
-          })
-      }).then(function(res){
-        setCurrentUser(true);
-      })
+  const [isAuth, setIsAuth] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  let [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
+  let [user, setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')) : null)
+  let [loading, setLoading] = useState(true)
+  const [registrationToggle, setRegistrationToggle] = useState(false);
+  const [email, setEmail] = useState('');
+  // Create the submit method.
+  const login = async e => {
+    e.preventDefault();
+    // Create the POST requuest
+    const response = await fetch('http://localhost:8000/users/token/', {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        "X-CSRFToken": csrftoken,
+      },
+      body: JSON.stringify({ 'username': username, 'password': password })
+    });
+    let data = await response.json()
+    if (response.status === 200) {
+      setAuthTokens(data)
+      setUser(jwt_decode(data.access))
+      localStorage.setItem('authTokens', JSON.stringify(data))
+
+    } else {
+      alert('Something went wrong!')
+    }
   }
 
-  function submitLogin(e){
-    e.preventDefault()
-    fetch(
-      import.meta.env.VITE_LOGIN, 
-      {
-          method:"POST",
-          headers:{
-              'Content-Type':'application/json',
-              "X-CSRFToken": csrftoken,
-          },
-          body: JSON.stringify({
-              //email: email,
-              username: username,
-              password:password,
-          })
-      }
-      ).then(function(res){
-        setCurrentUser(true);
-      })
+  const register = async e => {
+    e.preventDefault();
+    // Create the POST requuest
+    const response = await fetch('http://localhost:8000/users/register/', {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        "X-CSRFToken": csrftoken,
+      },
+      body: JSON.stringify({ 'username': username, 'password': password, 'email': email })
+    });
+    let data = await response.json()
+    if (response.status === 201) {
+      alert("please login")
+
+    } else {
+      alert('Something went wrong!')
+    }
   }
 
-  function submitLogout(e){
-    e.preventDefault()
-    fetch(
-      import.meta.env.VITE_LOGOUT, 
-      {
-          method:"get",
-          headers:{
-              'Content-Type':'application/json',
-              "X-CSRFToken": csrftoken,
-          },
-      }
-      ).then(function(res){
-        setCurrentUser(false);
-      })
+  let logout = () => {
+    setAuthTokens(null)
+    setUser(null)
+    localStorage.removeItem('authTokens')
   }
 
-  if(currentUser){
-    return (
-      <div className="div">
+  let updateToken = async () => {
+
+    let response = await fetch('http://127.0.0.1:8000/users/token/refresh/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        "X-CSRFToken": csrftoken,
+      },
+      body: JSON.stringify({ 'refresh': authTokens?.refresh })
+    })
+
+    let data = await response.json()
+
+    if (response.status === 200) {
+      setAuthTokens(data)
+      setUser(jwt_decode(data.access))
+      localStorage.setItem('authTokens', JSON.stringify(data))
+    } else {
+      logout()
+    }
+
+    if (loading) {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+
+    if (loading) {
+      updateToken()
+    }
+
+    let fourMinutes = 1000 * 60 * 4
+
+    let interval = setInterval(() => {
+      if (authTokens) {
+        updateToken()
+      }
+    }, fourMinutes)
+    return () => clearInterval(interval)
+
+  }, [authTokens, loading])
+
+  return (
+    <div>
+      {user ? <div className="div">
         <div className="left">
-          {/* <div className="container">
+          <div className="container">
             <h1>Hello User</h1>
-          </div> */}
-          
+          </div>
+
           <div className="grafics">
-          
-            <Chart/>
-          
+
+            <Chart />
+
             <div className="random_grafics">
-                <RandomGrafic />                
-                <RandomGrafic />
+              <RandomGrafic />
+              <RandomGrafic />
             </div>
           </div>
         </div>
-  
+
         <div className="right">
-        <img className='logo' src={imgSrc} alt="" />
-            <Sum />       
-            <ModalAddPurchase />
-            <ModalAddCategory />
-            <Recent/>
-            <button onClick={submitLogout}>Logout</button>
+          <img className='logo' src={imgSrc} alt="" />
+          <Sum />
+          <ModalAddPurchase />
+          <ModalAddCategory />
+          <Recent />
+          <button onClick={logout}>Logout</button>
         </div>
       </div>
-      )
-  }
-  return(
-    <div className="div">
-      <button id='form_btn' onClick={update_form_btn}>Register</button>
-      {registrationToggle ? (
-        <form action="" method='POST'>
-          <input type="text" placeholder='Username' onChange={(e) => setUsername(e.target.value)}/>
-          <input type="email" placeholder='Email' onChange={(e) => setEmail(e.target.value)}/>
-          <input type="password" placeholder='Password' onChange={(e) => setPassword(e.target.value)}/>
-          <input type="submit" onClick={submitRegistration}/>
-        </form>
-      ) : (
-        <form action="" method='POST'>
-          <input type="text" onChange={(e) => setUsername(e.target.value)}/>
-          <input type="password" onChange={(e) => setPassword(e.target.value)}/>
-          <input type="submit" onClick={submitLogin}/>
-        </form>
-      )}
-      
+
+        : <div className="form_cont">
+            {registrationToggle ? (
+              <form className='form' action="" method='POST'>
+                <input className='data_input' type="text" placeholder='Username' onChange={(e) => setUsername(e.target.value)}/>
+                <input className='data_input' type="email" placeholder='Email' onChange={(e) => setEmail(e.target.value)}/>
+                <input className='data_input' type="password" placeholder='Password' onChange={(e) => setPassword(e.target.value)}/>
+                <input className='submit' type="submit" onClick={register}/>
+              </form>
+            ) : (
+              <form className='form' action="" method='POST'>
+                <input className='data_input' placeholder='Username' type="text" onChange={(e) => setUsername(e.target.value)}/>
+                <input className='data_input' placeholder='Password' type="password" onChange={(e) => setPassword(e.target.value)}/>
+                <input className='submit' type="submit" onClick={login}/>
+              </form>
+            )}
+            <button className='register_login_btn' id='form_btn' onClick={update_form_btn}>Register</button>
+          </div>}
     </div>
+
   )
-  
 }
 
 export default App
